@@ -1,22 +1,86 @@
-import "./App.css";
-import Form from "./components/Form.tsx";
-import Header from "../Header.tsx";
-import TODOHero from "./components/TODOHero.tsx";
-import TODOList from "./components/TODOList.tsx";
+import { useState } from "react";
+import type { Task } from "./components/types.tsx";
 
 function App() {
+  const [tasks, setTasks] = useState<Task[]>([]);
+  const [newTask, setNewTask] = useState("");
+
+  const addTask = () => {
+    if (!newTask.trim()) return;
+
+    setTasks([
+      ...tasks,
+      {
+        id: Date.now(),
+        text: newTask,
+        completed: false,
+      },
+    ]);
+    setNewTask("");
+  };
+
+  const toggleTask = (id: number) => {
+    setTasks(
+      tasks.map((task) =>
+        task.id === id ? { ...task, completed: !task.completed } : task
+      )
+    );
+  };
+
+  const deleteTask = (id: number) => {
+    setTasks(tasks.filter((task) => task.id !== id));
+  };
+
   return (
-    <div className="bg-amber-700 min-h-screen flex flex-col items-center justify-center font-sans">
-      <h1 className="text-4xl text-white">Welcome to the Mini Dashboard 🚀</h1>
-      <div className="bg-amber-100 mt-4 p-4 rounded-lg shadow-md">
-        <p className="text-black">
-          This is a simple dashboard layout using Tailwind CSS.
-        </p>
-        <div className="wrapper">
-          <Header />
-          <TODOHero todos_completed={0} total_todos={0} />
-          <Form />
-          <TODOList todos={[]} />
+    <div className="min-h-screen bg-gray-900 py-8">
+      <div className="max-w-md mx-auto bg-white rounded-lg shadow-md p-6">
+        <h1 className="text-2xl font-bold text-center mb-6">Task Manager</h1>
+
+        <div className="flex mb-4">
+          <input
+            type="text"
+            value={newTask}
+            onChange={(e) => setNewTask(e.target.value)}
+            className="flex-1 p-2 border rounded-l-lg focus:outline-none focus:border-blue-500"
+            placeholder="Add a new task..."
+          />
+          <button
+            onClick={addTask}
+            className="bg-blue-500 text-white px-4 rounded-r-lg hover:bg-blue-600"
+          >
+            Add
+          </button>
+        </div>
+
+        <div className="space-y-2">
+          {tasks.map((task) => (
+            <div
+              key={task.id}
+              className="flex items-center p-3 bg-gray-50 rounded-lg"
+            >
+              <label className="flex items-center flex-1 cursor-pointer">
+                <input
+                  type="checkbox"
+                  checked={task.completed}
+                  onChange={() => toggleTask(task.id)}
+                  className="mr-3 h-4 w-4 cursor-pointer accent-blue-500"
+                />
+                <span
+                  className={`flex-1 ${
+                    task.completed ? "line-through text-gray-500" : ""
+                  }`}
+                >
+                  {task.text}
+                </span>
+              </label>
+              <button
+                onClick={() => deleteTask(task.id)}
+                className="text-red-500 hover:text-red-700"
+              >
+                Delete
+              </button>
+            </div>
+          ))}
         </div>
       </div>
     </div>
@@ -24,38 +88,3 @@ function App() {
 }
 
 export default App;
-
-/*
-
-import React from "react";
-import Form from "@/components/Form";
-import Header from "@/components/Header";
-import TODOHero from "@/components/TODOHero";
-import TODOList from "@/components/TODOList";
-function Home() {
-  return (
-    <div className="wrapper">
-      <Header />
-      <TODOHero todos_completed={0} total_todos={0} />
-      <Form />
-      <TODOList todos={[]} />
-    </div>
-  );
-}
-export default Home;
-
-<div className="flex items-center mt-7 text-black">
-          <input type="checkbox" className="mt-2" />
-          text Item 1 from input
-        </div>
-        <div className="flex items-center mt-4 text-black">
-          <textarea
-            className="InputTextArea p-1"
-            placeholder="Add new item"
-          ></textarea>
-        </div>
-        <button className="bg-amber-700 text-white px-4 py-2 rounded mt-4 hover:bg-amber-800">
-          Add Item
-        </button>
-      </div>
-      */
