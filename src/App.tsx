@@ -1,9 +1,14 @@
 import { useState } from "react";
 import type { Task } from "./components/types.tsx";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faTrashCan, faPencilAlt } from "@fortawesome/free-solid-svg-icons";
 
 function App() {
   const [tasks, setTasks] = useState<Task[]>([]);
   const [newTask, setNewTask] = useState("");
+  const [editTask, setEditTask] = useState<{ id: number | null; text: string }>(
+    { id: null, text: "" }
+  );
 
   const addTask = () => {
     if (!newTask.trim()) return;
@@ -31,6 +36,19 @@ function App() {
     setTasks(tasks.filter((task) => task.id !== id));
   };
 
+  const startEditTask = (task: Task) => {
+    setEditTask({ id: task.id, text: task.text });
+  };
+
+  const updateTask = () => {
+    setTasks(
+      tasks.map((task) =>
+        task.id === editTask.id ? { ...task, text: editTask.text } : task
+      )
+    );
+    setEditTask({ id: null, text: "" });
+  };
+
   return (
     <div className="min-h-screen bg-gray-900 py-8">
       <div className="max-w-md mx-auto bg-white rounded-lg shadow-md p-6">
@@ -51,6 +69,25 @@ function App() {
             Add
           </button>
         </div>
+
+        {editTask.id && (
+          <div className="mb-4 border-zinc-600 p-0 bg-gray-100 rounded flex justify-end">
+            <input
+              value={editTask.text}
+              onChange={(e) =>
+                setEditTask({ ...editTask, text: e.target.value })
+              }
+              className="flex-1 p-2  rounded-l-lg focus:outline-none focus:border-blue-500"
+              placeholder="Add new text..."
+            />
+            <button
+              onClick={updateTask}
+              className=" bg-gray-500 text-white px-4 rounded-r-lg hover:bg-gray-600"
+            >
+              Update
+            </button>
+          </div>
+        )}
 
         <div className="space-y-2">
           {tasks.map((task) => (
@@ -73,14 +110,19 @@ function App() {
                   {task.text}
                 </span>
               </label>
-              <button
-                onClick={() => deleteTask(task.id)}
-                className="text-red-500 hover:text-red-700"
-              >
-                Delete
+
+              <button onClick={() => startEditTask(task)}>
+                <FontAwesomeIcon icon={faPencilAlt} />
+              </button>
+
+              <button onClick={() => deleteTask(task.id)}>
+                <FontAwesomeIcon icon={faTrashCan} />
               </button>
             </div>
           ))}
+        </div>
+        <div className="mt-6 text-center text-gray-600">
+          <p>Kanske quote kan hamna härnere?</p>
         </div>
       </div>
     </div>
