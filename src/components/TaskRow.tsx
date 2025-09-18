@@ -1,6 +1,6 @@
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faTrashCan, faPencilAlt } from "@fortawesome/free-solid-svg-icons";
-import type { Task, Priority } from "./types";
+import type { Task } from "./types";
 
 const priorityMap = {
   high: { num: 1, color: "bg-red-500" },

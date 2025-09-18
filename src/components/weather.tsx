@@ -80,9 +80,9 @@ function Weather() {
 
   return (
     
-    <div className="App min-h-screen bg-gray-200 flex items-center justify-center mt-8">
+    <div className="App min-h-screen flex items-center justify-center mt-8">
       <div className="bg-white p-6 rounded-lg shadow-md w-full max-w-150">
-        <h2 className="text-xl font-bold text-gray-800 mb-4 text-center">Daily Advice</h2>
+        <h2 className="text-2xl font-bold text-center mb-6">Daily Advice</h2>
         <blockquote className="mb-6 p-4 bg-white text-center">
           <p className="text-lg text-gray-700">{advice}</p>
         </blockquote>
@@ -91,7 +91,7 @@ function Weather() {
           alt={isRaining ? 'Gym workout' : 'Jogging outside'}
           className="mx-auto mb-6 w-full max-w-[500px] h-auto"
         />
-        <h1 className="text-2xl font-bold text-gray-800 mb-4 text-center">Daily Weather in {selectedCity}</h1>
+        <h1 className="text-2xl font-bold text-center mb-6">Daily Weather in {selectedCity}</h1>
 <div className="mt-4 flex flex-col items-center">
   <div className="flex flex-col items-center mb-4">
     <label htmlFor="citySelect" className="mb-2 text-gray-600">Choose a city:</label>
