@@ -1,14 +1,7 @@
 import { useState } from "react";
 import type { Priority, Status, Task } from "./components/types.tsx";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faTrashCan, faPencilAlt } from "@fortawesome/free-solid-svg-icons";
-import { FilterIcon } from "./components/FilterIcon";
-
-const priorityMap = {
-  high: { num: 1, color: "bg-red-500" },
-  medium: { num: 2, color: "bg-yellow-400" },
-  low: { num: 3, color: "bg-green-500" },
-};
+import { TaskRow } from "./components/TaskRow";
+import { FilterBar } from "./components/FilterBar";
 
 function App() {
   const [tasks, setTasks] = useState<Task[]>([]);
@@ -97,7 +90,7 @@ function App() {
           <select
             value={newPriority}
             onChange={(e) => setNewPriority(e.target.value as Priority)}
-            className="border rounded-l-lg focus:outline-none focus:border-blue-500"
+            className="border ml-1 text-center focus:outline-none focus:border-blue-500"
           >
             <option value="low">Low</option>
             <option value="medium">Medium</option>
@@ -130,70 +123,23 @@ function App() {
           </div>
         )}
 
-        <div className="flex justify-between items-center mb-4">
-          <div className="flex space-x-2">
-            <button
-              onClick={() => setFilter("all")}
-              className="px-2 py-1 rounded bg-gray-200"
-            >
-              All
-            </button>
-            <button
-              onClick={() => setFilter("pending")}
-              className="px-2 py-1 rounded bg-yellow-200"
-            >
-              Pending
-            </button>
-            <button
-              onClick={() => setFilter("completed")}
-              className="px-2 py-1 rounded bg-green-200"
-            >
-              Completed
-            </button>
-          </div>
-          <FilterIcon className="w-8 h-8 ..." onClick={handleFilterIconClick} />
-        </div>
+        <FilterBar
+          filter={filter}
+          setFilter={setFilter}
+          onSortClick={handleFilterIconClick}
+          sorted={prioritySorted}
+        />
 
         <div className="space-y-2">
           {getSortedTasks().map((task) => (
-            <div
+            <TaskRow
               key={task.id}
-              className="flex items-center justify-between p-3 bg-gray-50 rounded-lg"
-            >
-              <label className="flex items-center flex-1 cursor-pointer">
-                <input
-                  type="checkbox"
-                  checked={task.completed}
-                  onChange={() => toggleTask(task.id)}
-                  className="mr-3 h-4 w-4 cursor-pointer accent-blue-500"
-                />
-                <span
-                  className={`flex-1 ${
-                    task.completed ? "line-through text-gray-500" : ""
-                  }`}
-                >
-                  {task.text}
-                </span>
-              </label>
-
-              <button onClick={() => startEditTask(task)} className="ml-2">
-                <FontAwesomeIcon icon={faPencilAlt} />
-              </button>
-              <button onClick={() => deleteTask(task.id)} className="ml-2">
-                <FontAwesomeIcon icon={faTrashCan} />
-              </button>
-              <span
-                className={`ml-4 font-semibold w-7 h-7 flex items-center justify-center rounded-full text-white ${
-                  priorityMap[task.priority].color
-                }`}
-              >
-                {priorityMap[task.priority].num}
-              </span>
-            </div>
+              task={task}
+              onToggle={toggleTask}
+              onEdit={startEditTask}
+              onDelete={deleteTask}
+            />
           ))}
-        </div>
-        <div className="mt-6 text-center text-gray-600">
-          <p>Kanske quote kan hamna härnere?</p>
         </div>
       </div>
     </div>
