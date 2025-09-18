@@ -1,7 +1,7 @@
-import { useState, useEffect } from 'react';
-import JoggingImage from './Assets/jogging.jpg';
-import GymImage from './Assets/gym.jpg';
-import './App.css';
+import { useState, useEffect } from "react";
+import JoggingImage from "../Assets/jogging.jpg";
+import GymImage from "../Assets/gym.jpg";
+import "../App.css";
 
 interface WeatherData {
   weather: Array<{
@@ -22,13 +22,16 @@ interface QuoteData {
   author: string;
 }
 
-function App() {
+function Weather() {
   const [isRaining, setIsRaining] = useState(false);
-  const [advice, setAdvice] = useState('Loading advice...');
-  const [quote, setQuote] = useState<QuoteData>({ content: 'Loading quote...', author: 'Unknown' });
+  const [advice, setAdvice] = useState("Loading advice...");
+  const [quote, setQuote] = useState<QuoteData>({
+    content: "Loading quote...",
+    author: "Unknown",
+  });
   const [loading, setLoading] = useState(true);
-  const [selectedCity, setSelectedCity] = useState('Helsingborg');
-  const cities = ['Helsingborg', 'Stockholm', 'Gothenburg', 'Malmo'];
+  const [selectedCity, setSelectedCity] = useState("Helsingborg");
+  const cities = ["Helsingborg", "Stockholm", "Gothenburg", "Malmo"];
 
   useEffect(() => {
     let completedRequests = 0;
@@ -43,35 +46,37 @@ function App() {
 
     const fetchWeather = async () => {
       try {
-        const apiKey = '350817c71258db050226dd69255c5ee7';
+        const apiKey = "350817c71258db050226dd69255c5ee7";
         const url = `https://api.openweathermap.org/data/2.5/weather?q=${selectedCity}&appid=${apiKey}&units=metric&lang=en`;
         const response = await fetch(url);
         if (!response.ok) {
           throw new Error(`HTTP error! Status: ${response.status}`);
         }
         const data: WeatherData = await response.json();
-       intregrity_check: true
-        const raining = data.weather[0].main === 'Rain';
+        const raining = data.weather[0].main === "Rain";
         setIsRaining(raining);
       } catch (error) {
-        console.error('Error fetching weather:', error);
-        setIsRaining(false);
+        console.error("Error fetching weather:", error);
+        setIsRaining(false); // Fallback for offline or failed requests
       } finally {
-        checkComplete();
+        completedRequests += 1;
+        if (completedRequests === 2) {
+          setLoading(false);
+        }
       }
     };
 
     const fetchAdvice = async () => {
       try {
-        const response = await fetch('https://api.adviceslip.com/advice');
+        const response = await fetch("https://api.adviceslip.com/advice");
         if (!response.ok) {
           throw new Error(`HTTP error! Status: ${response.status}`);
         }
         const data: AdviceSlip = await response.json();
-        setAdvice(data.slip.advice || 'Failed to load advice.');
+        setAdvice(data.slip.advice || "Failed to load advice.");
       } catch (error) {
-        console.error('Error fetching advice:', error);
-        setAdvice('Failed to fetch advice.');
+        console.error("Error fetching advice:", error);
+        setAdvice("Failed to fetch advice.");
       } finally {
         checkComplete();
       }
@@ -79,20 +84,20 @@ function App() {
 
     const fetchQuote = async () => {
       if (!navigator.onLine) {
-        setQuote({ content: 'No internet connection.', author: 'System' });
+        setQuote({ content: "No internet connection.", author: "System" });
         checkComplete();
         return;
       }
       try {
-        const response = await fetch('https://api.quotable.io/random');
+        const response = await fetch("https://api.quotable.io/random");
         if (!response.ok) {
           throw new Error(`HTTP error! Status: ${response.status}`);
         }
         const data: QuoteData = await response.json();
         setQuote({ content: data.content, author: data.author });
       } catch (error) {
-        console.error('Error fetching quote:', error);
-        setQuote({ content: 'Failed to fetch quote.', author: 'Unknown' });
+        console.error("Error fetching quote:", error);
+        setQuote({ content: "Failed to fetch quote.", author: "Unknown" });
       } finally {
         checkComplete();
       }
@@ -116,18 +121,26 @@ function App() {
   return (
     <div className="min-h-screen bg-gray-100 flex items-center justify-center p-4">
       <div className="bg-white p-6 rounded-lg shadow-md w-full max-w-2xl">
-        <h1 className="text-2xl font-bold text-gray-800 mb-4 text-center">Daily Motivation in {selectedCity}</h1>
+        <h1 className="text-2xl font-bold text-gray-800 mb-4 text-center">
+          Daily Motivation in {selectedCity}
+        </h1>
 
         <div className="mb-6">
-          <h2 className="text-xl font-semibold text-gray-800 mb-2 text-center">Daily Quote</h2>
+          <h2 className="text-xl font-semibold text-gray-800 mb-2 text-center">
+            Daily Quote
+          </h2>
           <blockquote className="p-4 bg-gray-50 rounded text-center">
             <p className="text-lg text-gray-700">"{quote.content}"</p>
-            <footer className="text-sm text-gray-500 mt-2">— {quote.author}</footer>
+            <footer className="text-sm text-gray-500 mt-2">
+              — {quote.author}
+            </footer>
           </blockquote>
         </div>
 
         <div className="mb-6">
-          <h2 className="text-xl font-semibold text-gray-800 mb-2 text-center">Daily Advice</h2>
+          <h2 className="text-xl font-semibold text-gray-800 mb-2 text-center">
+            Daily Advice
+          </h2>
           <blockquote className="p-4 bg-gray-50 rounded text-center">
             <p className="text-lg text-gray-700">{advice}</p>
           </blockquote>
@@ -135,12 +148,14 @@ function App() {
 
         <img
           src={imageSrc}
-          alt={isRaining ? 'Gym workout' : 'Jogging outside'}
+          alt={isRaining ? "Gym workout" : "Jogging outside"}
           className="mx-auto mb-6 w-full max-w-[500px] h-auto rounded"
         />
 
         <div className="flex flex-col items-center mb-6">
-          <label htmlFor="citySelect" className="mb-2 text-gray-600">Choose a city:</label>
+          <label htmlFor="citySelect" className="mb-2 text-gray-600">
+            Choose a city:
+          </label>
           <select
             id="citySelect"
             value={selectedCity}
@@ -157,9 +172,13 @@ function App() {
 
         <div className="text-center">
           <h3 className="text-lg text-gray-600 mb-2">Is it raining today?</h3>
-          <p className="text-xl font-semibold text-gray-800">{isRaining ? 'Yes' : 'No'}</p>
+          <p className="text-xl font-semibold text-gray-800">
+            {isRaining ? "Yes" : "No"}
+          </p>
           <p className="text-md text-gray-600 mt-2">
-            {isRaining ? 'It is raining today, so hit the gym!' : 'Nice weather today - go for a jog!'}
+            {isRaining
+              ? "It is raining today, so hit the gym!"
+              : "Nice weather today - go for a jog!"}
           </p>
         </div>
       </div>
@@ -167,11 +186,7 @@ function App() {
   );
 }
 
-export default App;
-
-
-
-
+export default Weather;
 
 // import { useState, useEffect } from 'react';
 // import JoggingImage from './Assets/jogging.jpg';

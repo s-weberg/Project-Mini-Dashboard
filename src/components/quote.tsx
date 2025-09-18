@@ -1,15 +1,15 @@
 import { useState, useEffect } from "react";
-import JoggingImage from "./Assets/jogging.jpg";
-import GymImage from "./Assets/gym.jpg";
+import JoggingImage from "../Assets/jogging.jpg";
+import GymImage from "../Assets/gym.jpg";
 
 interface QuoteData {
   content: string;
   author: string;
 }
 
-interface QuotesProps {
-  isRaining: boolean;
-}
+type QuotesProps = {
+  isRaining?: boolean;
+};
 
 const Quotes: React.FC<QuotesProps> = ({ isRaining }) => {
   const [quote, setQuote] = useState<QuoteData | null>({
