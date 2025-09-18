@@ -1,13 +1,13 @@
-
-import WeatherCard from "./components/weather.tsx";
-
+import TaskManager from "./components/taskManager.tsx";
+import Weather from "./components/weather.tsx";
 
 function App() {
   return (
-    <div className="min-h-screen bg-gray-900 py-8 flex flex-col md:flex-row gap-4 justify-center items-start">
-      
-      <WeatherCard />
-  
+    <div>
+      <div>
+        <TaskManager />
+        <Weather />
+      </div>
     </div>
   );
 }
