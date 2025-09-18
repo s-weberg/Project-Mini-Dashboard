@@ -81,7 +81,8 @@ function TaskManager() {
   };
 
   return (
-    <div className="max-w-md mx-auto bg-white rounded-lg shadow-md p-6">
+    
+    <div className=" mx-auto max-w-150 bg-white rounded-lg shadow-md p-6 mt-20">
       <h1 className="text-2xl font-bold text-center mb-6">Task Manager</h1>
       <div className="flex mb-10">
         <input
