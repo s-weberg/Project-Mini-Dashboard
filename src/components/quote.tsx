@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import JoggingImage from './assets/jogging.jpg';
 import GymImage from './assets/gym.jpg';
+import React from "react";
 
 interface QuoteData {
   content: string;
