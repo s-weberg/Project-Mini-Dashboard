@@ -27,13 +27,6 @@ function App() {
   useEffect(() => {
     let completedRequests = 0;
 
-    if (!navigator.onLine) {
-      setAdvice('No internet connection.');
-      setIsRaining(false);
-      setLoading(false);
-      return;
-    }
-
     const fetchWeather = async () => {
       try {
         const apiKey = '350817c71258db050226dd69255c5ee7';
@@ -45,12 +38,10 @@ function App() {
         const data: WeatherData = await response.json();
         const raining = data.weather[0].main === 'Rain';
         setIsRaining(raining);
-        completedRequests += 1;
-        if (completedRequests === 2) {
-          setLoading(false);
-        }
       } catch (error) {
         console.error('Error fetching weather:', error);
+        setIsRaining(false); // Fallback for offline or failed requests
+      } finally {
         completedRequests += 1;
         if (completedRequests === 2) {
           setLoading(false);
@@ -58,30 +49,27 @@ function App() {
       }
     };
 
-    fetch('https://api.adviceslip.com/advice')
-      .then((response) => {
+    const fetchAdvice = async () => {
+      try {
+        const response = await fetch('https://api.adviceslip.com/advice');
         if (!response.ok) {
           throw new Error(`HTTP error! Status: ${response.status}`);
         }
-        return response.json() as Promise<AdviceSlip>;
-      })
-      .then((data) => {
-        setAdvice(data && data.slip && data.slip.advice ? data.slip.advice : 'Failed to load advice.');
-        completedRequests += 1;
-        if (completedRequests === 2) {
-          setLoading(false);
-        }
-      })
-      .catch((error) => {
+        const data: AdviceSlip = await response.json();
+        setAdvice(data.slip.advice ?? 'Failed to load advice.');
+      } catch (error) {
         console.error('Error fetching advice:', error);
-        setAdvice('Failed to fetch advice.');
+        setAdvice('No internet connection or failed to fetch advice.');
+      } finally {
         completedRequests += 1;
         if (completedRequests === 2) {
           setLoading(false);
         }
-      });
+      }
+    };
 
     fetchWeather();
+    fetchAdvice();
   }, [selectedCity]);
 
   const imageSrc = isRaining ? GymImage : JoggingImage;
@@ -92,11 +80,10 @@ function App() {
 
   return (
     <div className="App min-h-screen bg-gray-100 flex items-center justify-center">
-      <div className="bg-white p-6 rounded-lg shadow-md w-full max-w-md">
+      <div className="bg-white p-6 rounded-lg shadow-md w-full max-w-150">
         <h2 className="text-xl font-bold text-gray-800 mb-4 text-center">Daily Advice</h2>
-        <blockquote className="mb-6 p-4 bg-gray-50 border-l-4 border-blue-200 text-center">
+        <blockquote className="mb-6 p-4 bg-white text-center">
           <p className="text-lg text-gray-700">{advice}</p>
-          <footer className="text-sm text-gray-500 mt-2">Advice Slip</footer>
         </blockquote>
         <img
           src={imageSrc}
@@ -104,27 +91,29 @@ function App() {
           className="mx-auto mb-6 w-full max-w-[500px] h-auto"
         />
         <h1 className="text-2xl font-bold text-gray-800 mb-4 text-center">Daily Weather in {selectedCity}</h1>
-        <div className="mt-4">
-          <label htmlFor="citySelect" className="mr-2 text-gray-600">Choose a city:</label>
-          <select
-            id="citySelect"
-            value={selectedCity}
-            onChange={(e) => setSelectedCity(e.target.value)}
-            className="p-2 border rounded bg-white text-gray-700"
-          >
-            {cities.map((city) => (
-              <option key={city} value={city} className="text-gray-800">
-                {city}
-              </option>
-            ))}
-          </select>
-        </div>
-        <h3 className="text-lg text-gray-600 mt-4">Is it raining today?</h3>
-        <p className="text-xl font-semibold mt-1 text-gray-800">{isRaining ? 'Yes' : 'No'}</p>
-        <p className="text-md text-gray-600 mt-2">
-          {isRaining ? 'It is raining today, so hit the gym!' : 'Nice weather today - go for a jog!'}
-        </p>
-      </div>
+<div className="mt-4 flex flex-col items-center">
+  <div className="flex flex-col items-center mb-4">
+    <label htmlFor="citySelect" className="mb-2 text-gray-600">Choose a city:</label>
+    <select
+      id="citySelect"
+      value={selectedCity}
+      onChange={(e) => setSelectedCity(e.target.value)}
+      className="p-2 border rounded bg-white text-gray-700 w-full max-w-xs"
+    >
+      {cities.map((city) => (
+        <option key={city} value={city} className="text-gray-800">
+          {city}
+        </option>
+      ))}
+    </select>
+  </div>
+  <h3 className="text-lg text-gray-600 mt-4 text-center">Is it raining today?</h3>
+  <p className="text-xl font-semibold mt-1 text-gray-800 text-center">{isRaining ? 'Yes' : 'No'}</p>
+  <p className="text-md text-gray-600 mt-2 text-center">
+    {isRaining ? 'It is raining today, so hit the gym!' : 'Nice weather today - go for a jog!'}
+  </p>
+</div>
+</div>
     </div>
   );
 }
