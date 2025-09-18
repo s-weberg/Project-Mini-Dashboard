@@ -2,6 +2,7 @@ import { useState } from "react";
 import type { Priority, Status, Task } from "./components/types.tsx";
 import { TaskRow } from "./components/TaskRow";
 import { FilterBar } from "./components/FilterBar";
+import { SearchBar } from "./components/SearchBar";
 
 function App() {
   const [tasks, setTasks] = useState<Task[]>([]);
@@ -12,6 +13,8 @@ function App() {
   );
   const [filter, setFilter] = useState<Status>("all");
   const [prioritySorted, setPrioritySorted] = useState(false);
+  const [searchText, setSearchText] = useState("");
+  const [showSearch, setShowSearch] = useState(false);
 
   const filteredTasks =
     filter === "all"
@@ -27,6 +30,10 @@ function App() {
       (a, b) => priorityOrder[a.priority] - priorityOrder[b.priority]
     );
   };
+
+  const visibleTasks = getSortedTasks().filter((task) =>
+    task.text.toLowerCase().includes(searchText.toLowerCase())
+  );
 
   const addTask = () => {
     if (!newTask.trim()) return;
@@ -128,10 +135,16 @@ function App() {
           setFilter={setFilter}
           onSortClick={handleFilterIconClick}
           sorted={prioritySorted}
+          showSearch={showSearch}
+          setShowSearch={setShowSearch}
         />
 
+        {showSearch && (
+          <SearchBar value={searchText} onChange={setSearchText} />
+        )}
+
         <div className="space-y-2">
-          {getSortedTasks().map((task) => (
+          {visibleTasks.map((task) => (
             <TaskRow
               key={task.id}
               task={task}
