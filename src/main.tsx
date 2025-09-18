@@ -1,16 +1,11 @@
-import "./index.css";
 import React from "react";
 import ReactDOM from "react-dom/client";
-import Weather from "./weather.tsx"
-//import App from "./App.jsx";
-
-
-
+import App from "./App.tsx";
+import "@fortawesome/fontawesome-free/css/all.min.css"; // <-- Add this line
+import "./index.css";
 
 ReactDOM.createRoot(document.getElementById("root")!).render(
   <React.StrictMode>
-   
-    <Weather />
-  
+    <App />
   </React.StrictMode>
 );
