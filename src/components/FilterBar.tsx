@@ -1,9 +1,9 @@
 import { FilterIcon } from "./FilterIcon";
 import type { Status } from "./types";
 
-type FilterBarProps = {
+export type FilterBarProps = {
   filter: Status;
-  setFilter: (status: Status) => void;
+  setFilter: React.Dispatch<React.SetStateAction<Status>>;
   onSortClick: () => void;
   sorted: boolean;
   showSearch: boolean;
@@ -11,11 +11,9 @@ type FilterBarProps = {
 };
 
 export function FilterBar({
-  filter,
   setFilter,
   onSortClick,
   sorted,
-  showSearch,
   setShowSearch,
 }: FilterBarProps) {
   return (
@@ -41,19 +39,19 @@ export function FilterBar({
         </button>
       </div>
       <div className="flex items-center">
-        <button
-          type="button"
-          className="text-gray-600 hover:text-blue-500"
-          onClick={() => setShowSearch((any) => !any)}
-        >
-          <i className="fa-solid fa-magnifying-glass"></i>
-        </button>
         <FilterIcon
-          className={`ml-2 w-8 h-8 hover:opacity-60 transition-opacity cursor-pointer ${
+          className={`w-8 h-8 hover:opacity-60 transition-opacity cursor-pointer ${
             sorted ? "opacity-60" : ""
           }`}
           onClick={onSortClick}
         />
+        <button
+          type="button"
+          className="ml-2 text-gray-600 hover:text-blue-500"
+          onClick={() => setShowSearch((any) => !any)}
+        >
+          <i className="fa-solid fa-magnifying-glass"></i>
+        </button>
       </div>
     </div>
   );

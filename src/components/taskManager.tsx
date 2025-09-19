@@ -80,10 +80,17 @@ function TaskManager() {
     setPrioritySorted((any) => !any);
   };
 
+  const completedCount = tasks.reduce(
+    (count, task) => (task.completed ? count + 1 : count),
+    0
+  );
+
   return (
-    
     <div className="mx-auto max-w-150 bg-white rounded-lg shadow-md p-6 mt-20">
       <h1 className="text-2xl font-bold text-center mb-6">Task Manager</h1>
+      <h2 className="text-lg text-center mb-4">
+        Completed tasks: {completedCount} / {tasks.length}
+      </h2>
       <div className="flex mb-10">
         <input
           type="text"
